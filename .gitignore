@@ -1,0 +1,6 @@
+__pycache__/
+*.py[cod]
+
+.env/
+db.json
+config.py
