@@ -113,5 +113,18 @@ async def addkey(ctx: commands.Context, *, key: typing.Union[str, None]):
     return await reply(ctx, f"Successfully added SSH key! Now `ssh {user['username']}@ws.nhspc.cc -p 8822` to access the workstation!")
 
 
+@bot.command(brief='Change Login Shell')
+async def chsh(ctx: commands.Context, *, shell: typing.Union[str, None]):
+    VALID_SHELL = ['sh', 'bash', 'zsh']
+    if shell is None or shell not in VALID_SHELL:
+        return await reply(ctx, f"Usage: `!chsh <shell>`, shell should be one of `{VALID_SHELL}`")
+    user = db.get_user_by_discord_id(ctx.author.id)
+    if user is None:
+        return await reply(ctx, f"Please first bind with a username using `!bind <username>`!")
+    success = user_management.update_user_login_shell(user['username'], f'/bin/{shell}')
+    if not success:
+        return await reply(ctx, f"Login Shell change failed QQ")
+    return await reply(ctx, f"Successfully changed Login Shell for user `{user['username']}`. This might need up to a few minutes to take effect.")
+
 if __name__ == '__main__':
     bot.run(config.DISCORD_TOKEN)

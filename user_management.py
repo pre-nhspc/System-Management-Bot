@@ -115,3 +115,16 @@ def update_group_member_list(group_id: str, member_uids: List[str]) -> bool:
     group_entry['memberUid'] = byte_member_uids
     conn.update_entry(group_dn, group_entry)
     return True
+
+
+def update_user_login_shell(user_id: str, shell: str) -> bool:
+    """Update user's login shell, return True if success"""
+    conn = LDAPConn()
+    byte_shell = shell.encode('utf-8')
+    user_dn = _uid_to_ldap_dn(user_id)
+    user_entry = conn.get_entry(user_dn)
+    if user_entry is None:
+        return False
+    user_entry['loginShell'] = [byte_shell]
+    conn.update_entry(user_dn, user_entry)
+    return True
